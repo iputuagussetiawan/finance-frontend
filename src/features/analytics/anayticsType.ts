@@ -1,4 +1,3 @@
-
 export interface FilterParams {
     preset?: string;
     from?: string;
@@ -30,10 +29,10 @@ export interface SummaryAnalyticsResponse {
         savingRate: {
             percentage: number;
             expenseRatio: number;
-          };
+        };
         percentageChange: PercentageChange;
         preset: PresetType;
-    }
+    };
 }
 
 export interface ChartAnalyticsResponse {
@@ -47,9 +46,8 @@ export interface ChartAnalyticsResponse {
         totalIncomeCount: number;
         totalExpenseCount: number;
         preset: PresetType;
-    }
+    };
 }
-
 
 export interface ExpensePieChartBreakdownResponse {
     message: string;
@@ -61,5 +59,5 @@ export interface ExpensePieChartBreakdownResponse {
             percentage: number;
         }[];
         preset: PresetType;
-    }
+    };
 }

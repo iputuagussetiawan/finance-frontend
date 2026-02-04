@@ -1,16 +1,16 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import authReducer from '../features/auth/authSlice';
-import storage from 'redux-persist/lib/storage'
+import storage from 'redux-persist/lib/storage';
 import {
-  persistReducer,
-  persistStore,
-  FLUSH,
-  REHYDRATE,
-  PAUSE,
-  PERSIST,
-  PURGE,
-  REGISTER,
-} from 'redux-persist'
+    persistReducer,
+    persistStore,
+    FLUSH,
+    REHYDRATE,
+    PAUSE,
+    PERSIST,
+    PURGE,
+    REGISTER,
+} from 'redux-persist';
 import { apiClient } from './api-client';
 //import { encryptTransform } from 'redux-persist-transform-encrypt';
 
@@ -28,32 +28,28 @@ const persistConfig = {
     //       },
     //     }),
     //   ],
-}
+};
 
 const rootReducer = combineReducers({
     [apiClient.reducerPath]: apiClient.reducer, // Add API client reducer to root reducer
-    auth:authReducer, // Add auth reducer to root reducer
-  })
+    auth: authReducer, // Add auth reducer to root reducer
+});
 
-  // Create a persisted version of the root reducer
-  const persistedReducer = persistReducer<RootReducerType>(persistConfig, rootReducer);
+// Create a persisted version of the root reducer
+const persistedReducer = persistReducer<RootReducerType>(persistConfig, rootReducer);
 
-
-const reduxPersistActions = [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER]
-  
+const reduxPersistActions = [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER];
 
 export const store = configureStore({
     reducer: persistedReducer,
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: reduxPersistActions, /// Ignore specific actions in serializable checks
-      },
-    }).concat(apiClient.middleware),
+    middleware: getDefaultMiddleware =>
+        getDefaultMiddleware({
+            serializableCheck: {
+                ignoredActions: reduxPersistActions, /// Ignore specific actions in serializable checks
+            },
+        }).concat(apiClient.middleware),
 });
 
-export const persistor = persistStore(store) // Create a persistor linked to the store
+export const persistor = persistStore(store); // Create a persistor linked to the store
 
-
-
-export type RootState = ReturnType<typeof store.getState>
+export type RootState = ReturnType<typeof store.getState>;

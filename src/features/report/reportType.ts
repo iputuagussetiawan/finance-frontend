@@ -1,5 +1,3 @@
-
-
 export interface ReportType {
     _id: string;
     userId: string;
@@ -20,9 +18,8 @@ export interface GetAllReportResponse {
         totalCount: number;
         totalPages: number;
         skip: number;
-    }
+    };
 }
-
 
 export interface UpdateReportSettingParams {
     isEnabled: boolean;
