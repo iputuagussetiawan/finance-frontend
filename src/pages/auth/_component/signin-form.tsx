@@ -36,20 +36,36 @@ const SignInForm = ({ className, ...props }: React.ComponentPropsWithoutRef<'for
         resolver: zodResolver(schema),
     });
 
-    const onSubmit = (values: FormValues) => {
-        login(values)
-            .unwrap()
-            .then(data => {
-                dispatch(setCredentials(data));
-                toast.success('Login successful');
-                setTimeout(() => {
-                    navigate(PROTECTED_ROUTES.OVERVIEW);
-                }, 1000);
-            })
-            .catch(error => {
-                console.log(error);
-                toast.error(error.data?.message || 'Failed to login');
-            });
+    // const onSubmit = (values: FormValues) => {
+    //     login(values)
+    //         .unwrap()
+    //         .then(data => {
+    //             dispatch(setCredentials(data));
+    //             toast.success('Login successful');
+    //             setTimeout(() => {
+    //                 navigate(PROTECTED_ROUTES.OVERVIEW);
+    //             }, 1000);
+    //         })
+    //         .catch(error => {
+    //             console.log(error);
+    //             toast.error(error.data?.message || 'Failed to login');
+    //         });
+    // };
+
+    //with try catch, asyn await
+    const onSubmit = async (values: FormValues) => {
+        try {
+            const data = await login(values).unwrap();
+
+            dispatch(setCredentials(data));
+            toast.success('Login successful');
+
+            setTimeout(() => {
+                navigate(PROTECTED_ROUTES.OVERVIEW);
+            }, 1000);
+        } catch (error: any) {
+            toast.error(error.data?.message || 'Failed to login');
+        }
     };
 
     return (

@@ -260,7 +260,6 @@ export function DataTable<TData>({
                     </Table>
                 )}
             </div>
-
             {/* Pagination */}
             {isShowPagination && (
                 <div className="mt-4">

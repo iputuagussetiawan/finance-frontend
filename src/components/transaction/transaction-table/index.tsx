@@ -1,58 +1,54 @@
 import { DataTable } from '@/components/data-table';
-import { TRANSACTION_DATA } from './data';
 import { transactionColumns } from './column';
 import { _TRANSACTION_TYPE, _TransactionType } from '@/constant';
 import { useState } from 'react';
 import useDebouncedSearch from '@/hooks/use-debounce-search';
+import { useGetAllTransactionsQuery } from '@/features/transaction/transactionAPI';
 
 type FilterType = {
-    type?: _TransactionType | undefined;
-    recurringStatus?: 'RECURRING' | 'NON_RECURRING' | undefined;
+    type?: _TransactionType;
+    recurringStatus?: 'RECURRING' | 'NON_RECURRING';
     pageNumber?: number;
     pageSize?: number;
 };
 
-const TransactionTable = (props: { pageSize?: number; isShowPagination?: boolean }) => {
+type TransactionTableProps = {
+    pageSize?: number;
+    isShowPagination?: boolean;
+};
+
+const TransactionTable = ({ pageSize = 10, isShowPagination = true }: TransactionTableProps) => {
     const [filter, setFilter] = useState<FilterType>({
         type: undefined,
         recurringStatus: undefined,
         pageNumber: 1,
-        pageSize: props.pageSize || 10,
+        pageSize: pageSize, // ✅ use destructured prop
     });
 
     const { debouncedTerm, setSearchTerm } = useDebouncedSearch('', {
         delay: 500,
     });
 
-    // const [bulkDeleteTransaction, { isLoading: isBulkDeleting }] =
-    //   useBulkDeleteTransactionMutation();
-
-    // const { data, isFetching } = useGetAllTransactionsQuery({
-    //   keyword: debouncedTerm,
-    //   type: filter.type,
-    //   recurringStatus: filter.recurringStatus,
-    //   pageNumber: filter.pageNumber,
-    //   pageSize: filter.pageSize,
-    // });
-
-    // const transactions = data?.transactions || [];
-    // const pagination = {
-    //   totalItems: data?.pagination?.totalCount || 0,
-    //   totalPages: data?.pagination?.totalPages || 0,
-    //   pageNumber: filter.pageNumber,
-    //   pageSize: filter.pageSize,
-    // };
-
-    const pagination = {
-        totalItems: 20,
-        totalPages: 1,
+    const { data, isFetching } = useGetAllTransactionsQuery({
+        keyword: debouncedTerm,
+        type: filter.type,
+        recurringStatus: filter.recurringStatus,
         pageNumber: filter.pageNumber,
         pageSize: filter.pageSize,
+    });
+
+    const transactions = data?.transactions ?? [];
+
+    const pagination = {
+        totalItems: data?.pagination?.totalCount ?? 0,
+        totalPages: data?.pagination?.totalPages ?? 1,
+        pageNumber: filter.pageNumber ?? 1,
+        pageSize: filter.pageSize ?? 10,
     };
 
     const handleSearch = (value: string) => {
-        console.log(debouncedTerm);
         setSearchTerm(value);
+        setFilter(prev => ({ ...prev, pageNumber: 1 }));
     };
 
     const handleFilterChange = (filters: Record<string, string>) => {
@@ -61,6 +57,7 @@ const TransactionTable = (props: { pageSize?: number; isShowPagination?: boolean
             ...prev,
             type: type as _TransactionType,
             recurringStatus: frequently as 'RECURRING' | 'NON_RECURRING',
+            pageNumber: 1,
         }));
     };
 
@@ -69,30 +66,21 @@ const TransactionTable = (props: { pageSize?: number; isShowPagination?: boolean
     };
 
     const handlePageSizeChange = (pageSize: number) => {
-        setFilter(prev => ({ ...prev, pageSize }));
+        setFilter(prev => ({ ...prev, pageSize, pageNumber: 1 }));
     };
 
     const handleBulkDelete = (transactionIds: string[]) => {
         console.log(transactionIds);
-
-        // bulkDeleteTransaction(transactionIds)
-        // .unwrap()
-        // .then(() => {
-        //   toast.success("Transactions deleted successfully");
-        // })
-        // .catch((error) => {
-        //   toast.error(error.data?.message || "Failed to delete transactions");
-        // });
     };
 
     return (
         <DataTable
-            data={TRANSACTION_DATA} //transactions
+            data={transactions}
             columns={transactionColumns}
             searchPlaceholder="Search transactions..."
-            isLoading={false}
+            isLoading={isFetching} // ✅ fixed
             isBulkDeleting={false}
-            isShowPagination={props.isShowPagination}
+            isShowPagination={isShowPagination} // ✅ fixed
             pagination={pagination}
             filters={[
                 {
@@ -113,11 +101,12 @@ const TransactionTable = (props: { pageSize?: number; isShowPagination?: boolean
                 },
             ]}
             onSearch={handleSearch}
-            onPageChange={pageNumber => handlePageChange(pageNumber)}
-            onPageSizeChange={pageSize => handlePageSizeChange(pageSize)}
-            onFilterChange={filters => handleFilterChange(filters)}
+            onPageChange={handlePageChange}
+            onPageSizeChange={handlePageSizeChange}
+            onFilterChange={handleFilterChange}
             onBulkDelete={handleBulkDelete}
         />
     );
 };
+
 export default TransactionTable;

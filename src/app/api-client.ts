@@ -4,6 +4,7 @@ import { RootState } from './store';
 const baseQuery = fetchBaseQuery({
     baseUrl: import.meta.env.VITE_API_URL,
     credentials: 'include',
+    //this handles authentication automatically for all API calls.
     prepareHeaders: (headers, { getState }) => {
         const auth = (getState() as RootState).auth;
         if (auth?.accessToken) {
@@ -16,7 +17,7 @@ const baseQuery = fetchBaseQuery({
 export const apiClient = createApi({
     reducerPath: 'api', // Add API client reducer to root reducer
     baseQuery: baseQuery,
-    refetchOnMountOrArgChange: true, // Refetch on mount or arg change
+    refetchOnMountOrArgChange: true, // Automatically refetches data when component mounts or query args change.
     tagTypes: ['transactions', 'analytics', 'billingSubscription'], // Tag types for RTK Query
-    endpoints: () => ({}), // Endpoints for RTK Query
+    endpoints: () => ({}), //Initially empty, later injected per feature (like your transactionApi).
 });

@@ -38,6 +38,7 @@ const rootReducer = combineReducers({
 // Create a persisted version of the root reducer
 const persistedReducer = persistReducer<RootReducerType>(persistConfig, rootReducer);
 
+//Middleware Setup
 const reduxPersistActions = [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER];
 
 export const store = configureStore({
