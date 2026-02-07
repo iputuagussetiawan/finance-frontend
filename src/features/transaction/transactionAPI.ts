@@ -116,4 +116,5 @@ export const {
     useUpdateTransactionMutation,
     useDeleteTransactionMutation,
     useBulkDeleteTransactionMutation,
+    useBulkImportTransactionMutation,
 } = transactionApi;

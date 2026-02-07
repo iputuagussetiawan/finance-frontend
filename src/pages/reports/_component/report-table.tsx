@@ -1,7 +1,7 @@
 import { DataTable } from '@/components/data-table';
-import { REPORT_DATA } from './data';
 import { reportColumns } from './column';
 import { useState } from 'react';
+import { useGetAllReportsQuery } from '@/features/report/reportAPI';
 
 const ReportTable = () => {
     const [filter, setFilter] = useState({
@@ -9,18 +9,11 @@ const ReportTable = () => {
         pageSize: 10,
     });
 
-    // const { data, isFetching } = useGetAllReportsQuery(filter)
-
-    // const pagination = {
-    //   totalItems: data?.pagination?.totalCount || 0,
-    //   totalPages: data?.pagination?.totalPages || 0,
-    //   pageNumber: filter.pageNumber,
-    //   pageSize: filter.pageSize,
-    // }
+    const { data, isFetching } = useGetAllReportsQuery(filter);
 
     const pagination = {
-        totalItems: 0,
-        totalPages: 0,
+        totalItems: data?.pagination?.totalCount || 0,
+        totalPages: data?.pagination?.totalPages || 0,
         pageNumber: filter.pageNumber,
         pageSize: filter.pageSize,
     };
@@ -35,9 +28,9 @@ const ReportTable = () => {
 
     return (
         <DataTable
-            data={REPORT_DATA} //data?.reports || []
+            data={data?.reports || []} //data?.reports || []
             columns={reportColumns}
-            isLoading={false}
+            isLoading={isFetching}
             showSearch={false}
             className="[&_td]:!w-[5%]"
             pagination={pagination}

@@ -20,7 +20,11 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { useTypedSelector } from '@/app/hook';
+import { useAppDispatch, useTypedSelector } from '@/app/hook';
+import { useUpdateReportSettingMutation } from '@/features/report/reportAPI';
+import { updateCredentials } from '@/features/auth/authSlice';
+import { toast } from 'sonner';
+import { useEffect } from 'react';
 
 const formSchema = z.object({
     email: z.string(),
@@ -31,35 +35,46 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 const ScheduleReportForm = ({ onCloseDrawer }: { onCloseDrawer: () => void }) => {
-    //const dispatch = useAppDispatch();
+    const dispatch = useAppDispatch();
     const { user, reportSetting } = useTypedSelector(state => state.auth);
 
-    // const [updateReportSetting,{isLoading}] = useUpdateReportSettingMutation();
-
-    const isLoading = false;
+    const [updateReportSetting, { isLoading }] = useUpdateReportSettingMutation();
 
     // Initialize the form
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            email: user?.email || '',
-            isEnabled: reportSetting?.isEnabled || true,
-            frequency: reportSetting?.frequency || 'MONTHLY',
+            email: '',
+            isEnabled: true,
+            frequency: 'MONTHLY',
         },
     });
+
+    useEffect(() => {
+        if (user && reportSetting) {
+            form.reset({
+                email: user?.email,
+                isEnabled: reportSetting?.isEnabled,
+                frequency: reportSetting?.frequency,
+            });
+        }
+    }, [user, form, reportSetting]);
 
     // Handle form submission
     const onSubmit = (values: FormValues) => {
         const payload = { isEnabled: values.isEnabled };
         console.log('Form submitted:', payload);
         onCloseDrawer();
-        // updateReportSetting(payload).unwrap().then(() => {
-        //   dispatch(updateCredentials({reportSetting: payload}))
-        //   onCloseDrawer();
-        //   toast.success("Report setting updated successfully");
-        // }).catch((error) => {
-        //   toast.error(error.data.message || "Failed to update report setting");
-        // })
+        updateReportSetting(payload)
+            .unwrap()
+            .then(() => {
+                dispatch(updateCredentials({ reportSetting: payload }));
+                onCloseDrawer();
+                toast.success('Report setting updated successfully');
+            })
+            .catch(error => {
+                toast.error(error.data.message || 'Failed to update report setting');
+            });
     };
 
     // Get summary text based on form values

@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { MAX_IMPORT_LIMIT } from '@/constant';
 import { BulkTransactionType } from '@/features/transaction/transationType';
 import { useProgressLoader } from '@/hooks/use-progress-loader';
+import { useBulkImportTransactionMutation } from '@/features/transaction/transactionAPI';
 
 type ConfirmationStepProps = {
     file: File | null;
@@ -82,7 +83,7 @@ const ConfirmationStep = ({
     const { progress, isLoading, startProgress, updateProgress, doneProgress, resetProgress } =
         useProgressLoader({ initialProgress: 10, completionDelay: 500 });
 
-    // const [bulkImportTransaction] = useBulkImportTransactionMutation();
+    const [bulkImportTransaction] = useBulkImportTransactionMutation();
 
     const handleImport = () => {
         const { transactions, hasValidationErrors } = getAssignFieldToMappedTransactions();
@@ -115,23 +116,24 @@ const ConfirmationStep = ({
             onComplete();
         }, 2000);
 
-        // bulkImportTransaction(payload)
-        //   .unwrap()
-        //   .then(() => {
-        //     updateProgress(100);
-        //     toast.success("Imported transactions successfully");
-        //   })
-        //   .catch((error) => {
-        //     resetProgress();
-        //     toast.error(error.data?.message || "Failed to import transactions");
-        //   })
-        //   .finally(() => {
-        //     clearInterval(interval);
-        //     setTimeout(() => {
-        //       resetProgress();
-        //       onComplete();
-        //     }, 500);
-        //   });
+        bulkImportTransaction(payload)
+            .unwrap()
+            .then(() => {
+                updateProgress(100);
+                toast.success('Imported transactions successfully');
+            })
+            .catch(error => {
+                resetProgress();
+                toast.error(error.data?.message || 'Failed to import transactions');
+            })
+            .finally(() => {
+                clearInterval(interval);
+                setTimeout(() => {
+                    doneProgress();
+                    resetProgress();
+                    onComplete();
+                }, 500);
+            });
     };
 
     const getAssignFieldToMappedTransactions = () => {

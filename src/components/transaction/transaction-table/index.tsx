@@ -3,7 +3,11 @@ import { transactionColumns } from './column';
 import { _TRANSACTION_TYPE, _TransactionType } from '@/constant';
 import { useState } from 'react';
 import useDebouncedSearch from '@/hooks/use-debounce-search';
-import { useGetAllTransactionsQuery } from '@/features/transaction/transactionAPI';
+import {
+    useBulkDeleteTransactionMutation,
+    useGetAllTransactionsQuery,
+} from '@/features/transaction/transactionAPI';
+import { toast } from 'sonner';
 
 type FilterType = {
     type?: _TransactionType;
@@ -28,6 +32,9 @@ const TransactionTable = ({ pageSize = 10, isShowPagination = true }: Transactio
     const { debouncedTerm, setSearchTerm } = useDebouncedSearch('', {
         delay: 500,
     });
+
+    const [bulkDeleteTransaction, { isLoading: isBulkDeleting }] =
+        useBulkDeleteTransactionMutation();
 
     const { data, isFetching } = useGetAllTransactionsQuery({
         keyword: debouncedTerm,
@@ -70,7 +77,14 @@ const TransactionTable = ({ pageSize = 10, isShowPagination = true }: Transactio
     };
 
     const handleBulkDelete = (transactionIds: string[]) => {
-        console.log(transactionIds);
+        bulkDeleteTransaction(transactionIds)
+            .unwrap()
+            .then(() => {
+                toast.success('Transactions deleted successfully');
+            })
+            .catch(error => {
+                toast.error(error.data?.message || 'Failed to delete transactions');
+            });
     };
 
     return (
