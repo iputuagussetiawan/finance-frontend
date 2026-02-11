@@ -1,5 +1,13 @@
 import { useEffect, useState } from 'react';
-import { format, subDays, subMonths, subYears, startOfMonth, startOfYear } from 'date-fns';
+import {
+    format,
+    subDays,
+    subMonths,
+    subYears,
+    startOfMonth,
+    startOfYear,
+    endOfDay,
+} from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
@@ -37,16 +45,16 @@ interface DateRangeSelectProps {
     defaultRange?: DateRangeEnumType;
 }
 
-const today = new Date();
-const yesterday = subDays(today, 1);
+const now = new Date();
+const today = endOfDay(now);
 
 const presets: DateRangePreset[] = [
     {
         label: 'Last 30 Days',
         value: DateRangeEnum.LAST_30_DAYS,
         getRange: () => ({
-            from: subDays(yesterday, 29),
-            to: yesterday,
+            from: subDays(today, 29),
+            to: today,
             value: DateRangeEnum.LAST_30_DAYS,
             label: 'for Past 30 Days',
         }),
