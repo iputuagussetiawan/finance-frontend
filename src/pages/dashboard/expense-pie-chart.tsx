@@ -14,6 +14,7 @@ import { formatCurrency } from '@/lib/format-currency';
 import { Skeleton } from '@/components/ui/skeleton';
 import { formatPercentage } from '@/lib/format-percentage';
 import { EmptyState } from '@/components/empty-state';
+import { useExpensePieChartBreakdownQuery } from '@/features/analytics/analyticsAPI';
 
 interface Category {
     name: string;
@@ -56,26 +57,28 @@ const chartConfig = {
 const ExpensePieChart = (props: { dateRange?: DateRangeType }) => {
     const { dateRange } = props;
 
-    // const { data, isFetching } = useExpensePieChartBreakdownQuery({
-    //   preset: dateRange?.value,
-    // });
-    // const categories = data?.data?.breakdown || [];
-    // const totalSpent = data?.data?.totalSpent || 0;
+    const { data, isFetching } = useExpensePieChartBreakdownQuery({
+        preset: dateRange?.value,
+    });
+    const categories = data?.data?.breakdown || [];
+    const totalSpent = data?.data?.totalSpent || 0;
 
-    const isFetching = false;
+    console.log(categories);
 
-    const totalSpent = React.useMemo(() => {
-        return _categories.reduce((sum, category) => sum + category.amount, 0);
-    }, []);
+    // const isFetching = false;
 
-    // Format data for pie chart
-    const categories = React.useMemo(() => {
-        return _categories.map(category => ({
-            name: category.name,
-            value: category.amount,
-            percentage: Math.round((category.amount / totalSpent) * 100),
-        }));
-    }, [totalSpent]);
+    // const totalSpent = React.useMemo(() => {
+    //     return _categories.reduce((sum, category) => sum + category.amount, 0);
+    // }, []);
+
+    // // Format data for pie chart
+    // const categories = React.useMemo(() => {
+    //     return _categories.map(category => ({
+    //         name: category.name,
+    //         value: category.amount,
+    //         percentage: Math.round((category.amount / totalSpent) * 100),
+    //     }));
+    // }, [totalSpent]);
 
     if (isFetching) {
         return <PieChartSkeleton />;
