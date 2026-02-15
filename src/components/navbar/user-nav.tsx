@@ -30,8 +30,7 @@ export function UserNav({
                     <Avatar className="h-10 w-10 !cursor-pointer ">
                         <AvatarImage
                             src={profilePicture || ''}
-                            className="!cursor-pointer "
-                            className="aspect-square h-full w-full object-cover"
+                            className="!cursor-pointer aspect-square h-full w-full object-cover"
                         />
                         <AvatarFallback
                             className="!bg-[var(--secondary-dark-color)] border !border-gray-700
