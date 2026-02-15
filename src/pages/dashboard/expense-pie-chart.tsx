@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Label, Pie, PieChart, Cell } from 'recharts';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,35 +15,11 @@ import { formatPercentage } from '@/lib/format-percentage';
 import { EmptyState } from '@/components/empty-state';
 import { useExpensePieChartBreakdownQuery } from '@/features/analytics/analyticsAPI';
 
-interface Category {
-    name: string;
-    amount: number;
-}
-
 const COLORS = [
     'var(--color-chart-1)',
     'var(--color-chart-2)',
     'var(--color-chart-3)',
     'var(--color-chart-4)',
-];
-
-const _categories: Category[] = [
-    {
-        name: 'Food & Dining',
-        amount: 450,
-    },
-    {
-        name: 'Rent',
-        amount: 500,
-    },
-    {
-        name: 'Utilities',
-        amount: 300,
-    },
-    {
-        name: 'Others',
-        amount: 100,
-    },
 ];
 
 // Create chart config for shadcn UI chart

@@ -33,8 +33,7 @@ const TransactionTable = ({ pageSize = 10, isShowPagination = true }: Transactio
         delay: 500,
     });
 
-    const [bulkDeleteTransaction, { isLoading: isBulkDeleting }] =
-        useBulkDeleteTransactionMutation();
+    const [bulkDeleteTransaction] = useBulkDeleteTransactionMutation();
 
     const { data, isFetching } = useGetAllTransactionsQuery({
         keyword: debouncedTerm,
