@@ -101,7 +101,10 @@ export function AccountForm() {
                     <FormLabel>Profile Picture</FormLabel>
                     <div className="flex items-center gap-4">
                         <Avatar className="h-20 w-20">
-                            <AvatarImage src={avatarUrl || user?.profilePicture || ''} />
+                            <AvatarImage
+                                src={avatarUrl || user?.profilePicture || ''}
+                                className="aspect-square h-full w-full object-cover"
+                            />
                             <AvatarFallback className="text-2xl">
                                 {form.watch('name')?.charAt(0)?.toUpperCase() || 'U'}
                             </AvatarFallback>

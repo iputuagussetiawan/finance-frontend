@@ -28,7 +28,11 @@ export function UserNav({
                     className="relative !bg-transparent h-8 w-8 rounded-full !gap-0"
                 >
                     <Avatar className="h-10 w-10 !cursor-pointer ">
-                        <AvatarImage src={profilePicture || ''} className="!cursor-pointer " />
+                        <AvatarImage
+                            src={profilePicture || ''}
+                            className="!cursor-pointer "
+                            className="aspect-square h-full w-full object-cover"
+                        />
                         <AvatarFallback
                             className="!bg-[var(--secondary-dark-color)] border !border-gray-700
                !text-white"
