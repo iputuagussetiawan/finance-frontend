@@ -10,6 +10,8 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
+import useBillingSubscription from '@/hooks/use-billing-subscription';
+import { useTypedSelector } from '@/app/hook';
 
 export function UserNav({
     userName,
@@ -20,6 +22,16 @@ export function UserNav({
     profilePicture: string;
     onLogout: () => void;
 }) {
+    const { accessToken } = useTypedSelector(state => state.auth);
+    const { isSuccess, isLoading, isPro, isTrialActive, daysLeft } =
+        useBillingSubscription(accessToken);
+    const subscriptionLabel = isLoading
+        ? 'loading...'
+        : isPro
+          ? 'Pro Plan'
+          : isTrialActive
+            ? `Free Trial (${daysLeft}) day${daysLeft === 1 ? '' : 's'} left`
+            : 'Trial Expired';
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -52,7 +64,7 @@ export function UserNav({
                 <DropdownMenuLabel className="flex flex-col items-start gap-1">
                     <span className="font-semibold">{userName}</span>
                     <span className="text-[13px] text-gray-400 font-light">
-                        Free Trial (2 days left)
+                        {subscriptionLabel}
                     </span>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator className="!bg-gray-700" />
