@@ -84,7 +84,7 @@ const TransactionForm = (props: {
 
     const [createTransaction, { isLoading: isCreating }] = useCreateTransactionMutation();
 
-    const [updateTransaction, { isLoading: isUpdating }] = useUpdateTransactionMutation();
+    const [updateTransaction] = useUpdateTransactionMutation();
 
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),

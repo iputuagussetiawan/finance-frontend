@@ -23,8 +23,7 @@ export function UserNav({
     onLogout: () => void;
 }) {
     const { accessToken } = useTypedSelector(state => state.auth);
-    const { isSuccess, isLoading, isPro, isTrialActive, daysLeft } =
-        useBillingSubscription(accessToken);
+    const { isLoading, isPro, isTrialActive, daysLeft } = useBillingSubscription(accessToken);
     const subscriptionLabel = isLoading
         ? 'loading...'
         : isPro
